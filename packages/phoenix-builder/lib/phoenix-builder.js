@@ -1,20 +1,18 @@
 #!/usr/bin/env node
-console.log('hugkuguk')
-const path = require('path');
-
 const rollup = require('rollup');
-console.log(rollup)
-
+const path = require('path');
 const resolve = require('@rollup/plugin-node-resolve').default;
 const babel = require('@rollup/plugin-babel').default;
 const postcss = require('rollup-plugin-postcss');
 
 const currentWorkingPath = process.cwd();
-const { main, name } = require(path.join(currentWorkingPath, 'package.json'));
+// Little refactor from where we get the code
+const { src, name } = require(path.join(currentWorkingPath, 'package.json'));
 
-const inputPath = path.join(currentWorkingPath, main);
+// build input path using the src
+const inputPath = path.join(currentWorkingPath, src);
 
-// Little workaround to get package name without scope
+// Little hack to just get the file name
 const fileName = name.replace('@ilhams_dev/', '');
 
 // see below for details on the options
@@ -30,10 +28,10 @@ const inputOptions = {
     babel({
       presets: ['@babel/preset-env', '@babel/preset-react'],
       babelHelpers: 'bundled',
+      exclude: 'node_modules/**',
     }),
   ],
 };
-
 const outputOptions = [
   {
     file: `dist/${fileName}.cjs.js`,
